@@ -26,7 +26,7 @@ struct ContentView: View {
                     HStack {
                         ForEach(0..<Self.gridSize, id: \.self) { column in
                             Button {
-                                print("Clicked")
+                                processAnswer(at: row, column)
                             } label : {
                                 Image(image(row, column))
                             }
@@ -35,8 +35,33 @@ struct ContentView: View {
                     }
                 }
             }
+            .onAppear(perform: createLevel)
+            .contextMenu {
+                Button("Start new game") {
+                    currenLevel = 1
+                    createLevel()
+                }
+            }
+            .opacity(isGameOver ? 0.2 : 1)
+            
+            if isGameOver {
+                VStack {
+                    Text("Game over!")
+                        .font(.largeTitle)
+                    Button("Play again") {
+                        currenLevel = 1
+                        isGameOver = false
+                        createLevel()
+                    }
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .buttonStyle(.borderless)
+                    .padding(20)
+                    .background(.blue)
+                    .clipShape(Capsule())
+                }
+            }
         }
-        .onAppear(perform: createLevel)
     }
     
     func image(_ row: Int, _ column: Int) -> String {
@@ -78,13 +103,27 @@ struct ContentView: View {
     }
     
     func createLevel() {
-        if currenLevel == 9 {
+        let numberOfItems = [0, 5, 15, 25, 35, 49, 65, 81, 100]
+        if currenLevel == numberOfItems.count {
             withAnimation {
                 isGameOver = true
             }
         } else {
-            let numberOfItems = [0, 5, 15, 25, 35, 49, 65, 81, 100]
             generatinLayout(items: numberOfItems[currenLevel])
+        }
+    }
+    
+    func processAnswer(at row: Int, _ column: Int) {
+        if image(row, column) == images [0] {
+            // Correct answer
+            currenLevel += 1
+            createLevel()
+        } else {
+            // Wrong
+            if currenLevel > 1 {
+                currenLevel -= 1
+            }
+            createLevel()
         }
     }
 }
