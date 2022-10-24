@@ -8,15 +8,41 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    static let gridSize = 10
+    
+    @State var images = ["elephant", "giraffe", "hippo", "monkey", "panda", "parrot", "penguin", "pig", "rabbit", "snake"]
+    @State var layout = Array(repeating: "penguin", count: gridSize * gridSize)
+    @State var currenLevel = 1
+    @State var isGameOver = false
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        ZStack {
+            VStack {
+                Text("Odd One Out")
+                    .font(.system(size: 36, weight: .thin))
+                    .fixedSize()
+                ForEach(0..<Self.gridSize, id: \.self) { row in
+                    HStack {
+                        ForEach(0..<Self.gridSize, id: \.self) { column in
+                            Button {
+                                print("Clicked")
+                            } label : {
+                                Image(image(row, column))
+                            }
+                            .buttonStyle(.borderless)
+                        }
+                    }
+                }
+            }
         }
-        .padding()
     }
+    
+    func image(_ row: Int, _ column: Int) -> String {
+        layout[row * Self.gridSize + column]
+    }
+    
+    
 }
 
 struct ContentView_Previews: PreviewProvider {
