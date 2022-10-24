@@ -22,6 +22,8 @@ struct ContentView: View {
                 Text("Odd One Out")
                     .font(.system(size: 36, weight: .thin))
                     .fixedSize()
+                Text("Level \(currenLevel)")
+                    .font(.headline)
                 ForEach(0..<Self.gridSize, id: \.self) { row in
                     HStack {
                         ForEach(0..<Self.gridSize, id: \.self) { column in
