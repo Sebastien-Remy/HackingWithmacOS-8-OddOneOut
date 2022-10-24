@@ -36,13 +36,57 @@ struct ContentView: View {
                 }
             }
         }
+        .onAppear(perform: createLevel)
     }
     
     func image(_ row: Int, _ column: Int) -> String {
         layout[row * Self.gridSize + column]
     }
     
+    func generatinLayout(items: Int) {
+        // Remove any existing layout
+        layout.removeAll(keepingCapacity: true)
+        
+        // Randomize image order, and consider the first image to be the correct animal
+        images.shuffle()
+        layout.append(images[0])
+        
+        // Prepare to loop through the other animals
+        var numUsed = 0
+        var itemCount = 1
+        
+        for _ in 1..<items {
+            // place the current animal images and add to the counter
+            layout.append(images[itemCount])
+            numUsed += 1
+            
+            // If we already placed two, move to the next animal image
+            if (numUsed == 2) {
+                numUsed = 0
+                itemCount += 1
+            }
+            
+            // if we placed all the animal iages, go back to index 1
+            if (itemCount == images.count) {
+                itemCount = 1
+            }
+        }
+        
+        // fill the raainder of our array with empty rectangles then shuffles the layout
+        layout += Array(repeating: "empty", count: 100 - layout.count)
+        layout.shuffle()
+    }
     
+    func createLevel() {
+        if currenLevel == 9 {
+            withAnimation {
+                isGameOver = true
+            }
+        } else {
+            let numberOfItems = [0, 5, 15, 25, 35, 49, 65, 81, 100]
+            generatinLayout(items: numberOfItems[currenLevel])
+        }
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
